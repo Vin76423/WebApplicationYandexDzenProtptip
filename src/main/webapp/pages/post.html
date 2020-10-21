@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>post-page</title>
+    </head>
+    <body>
+        <div>
+            <strong th:text="${post.title}"></strong>
+            <em> created: </em>
+            <em th:text="${post.showDate()}"></em>
+            <p th:text="${post.massage}"></p>
+            <br>
+
+            <div th:if="${!post.comments.isEmpty()}">
+                <ul th:each="comment : ${post.comments}">
+                    <li >
+                        <p th:text="${comment.massage}"></p>
+                        <em th:text="${comment.showDate()}"></em>
+                        <em>     ***    </em>
+                        <em th:text="${comment.author.login}"></em>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <a th:href="@{/post/set-like?post-id={id}(id=${post.id})}">&#x2764</a>
+                <a th:if="${!post.likes.isEmpty()}"
+                   th:href="@{/post/like?post-id={id}(id=${post.id})}"
+                   th:text="${post.likes.size()}"></a>
+            </div>
+        </div>
+
+
+        <div th:if="${session.user != null}">
+            <form th:action="@{/post/set-comment}" method="post" th:object="${commentCreateDto}">
+                <input type="hidden" name="post-id" th:value="${post.id}">
+
+                <label th:for="${#ids.next('massage')}">massage:</label>
+                <input type="text" th:field="*{massage}"/>
+                <a th:if="${#fields.hasErrors('massage')}" th:errors="*{massage}"></a>
+
+                <button>create</button>
+            </form>
+        </div>
+
+
+        <a th:href="@{/home}">Home page</a>
+    </body>
+</html>
